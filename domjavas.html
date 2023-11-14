@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .cart-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quantity {
+            margin: 0 10px;
+        }
+
+        .heart-icon {
+            cursor: pointer;
+            color: #ccc;
+        }
+    </style>
+    <title>Shopping Cart</title>
+</head>
+<body>
+
+<div id="cart">
+
+</div>
+
+<script>
+    // Sample cart data
+    const cartItems = [
+        { id: 1, name: 'Item 1', price: 10, quantity: 2, liked: false },
+        { id: 2, name: 'Item 2', price: 20, quantity: 1, liked: true },
+        // Add more items as needed
+    ];
+
+    // Function to render cart items
+    function renderCart() {
+        const cartContainer = document.getElementById('cart');
+        cartContainer.innerHTML = ''; // Clear previous content
+
+        cartItems.forEach(item => {
+            const cartItemElement = document.createElement('div');
+            cartItemElement.className = 'cart-item';
+
+            // Display item details
+            cartItemElement.innerHTML = `
+                <span>${item.name}</span>
+                <div class="quantity">
+                    <button onclick="adjustQuantity(${item.id}, -1)">-</button>
+                    ${item.quantity}
+                    <button onclick="adjustQuantity(${item.id}, 1)">+</button>
+                </div>
+                <span>$${item.price * item.quantity}</span>
+                <span class="heart-icon ${item.liked ? 'liked' : ''}" onclick="toggleLike(${item.id})">&#x2665;</span>
+                <button onclick="removeItem(${item.id})">Remove</button>
+            `;
+
+            cartContainer.appendChild(cartItemElement);
+        });
+
+        // Display total price
+        const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+        cartContainer.innerHTML += `<div>Total: $${totalPrice}</div>`;
+    }
+
+    // Function to adjust item quantity
+    function adjustQuantity(itemId, amount) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            item.quantity += amount;
+            if (item.quantity < 1) {
+                item.quantity = 1;
+            }
+            renderCart();
+        }
+    }
+
+    // Function to toggle item like
+    function toggleLike(itemId) {
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            item.liked = !item.liked;
+            renderCart();
+        }
+    }
+
+    // Function to remove item from the cart
+    function removeItem(itemId) {
+        const index = cartItems.findIndex(item => item.id === itemId);
+        if (index !== -1) {
+            cartItems.splice(index, 1);
+            renderCart();
+        }
+    }
+
+    // Initial render
+    renderCart();
+</script>
+
+</body>
+</html>
